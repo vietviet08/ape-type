@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import type { RenderedWord } from "@/types";
 
 interface WordRowProps {
-  words: RenderedWord[];
+  readonly words: readonly RenderedWord[];
 }
 
 const STATE_CLASS_MAP: Record<string, string> = {

@@ -3,7 +3,7 @@ const UINT32_MAX = 0x100000000;
 function xfnv1a(seed: string): () => number {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < seed.length; i += 1) {
-    h ^= seed.charCodeAt(i);
+    h ^= seed.codePointAt(i) || 0;
     h = Math.imul(h, 16777619);
   }
   return () => {

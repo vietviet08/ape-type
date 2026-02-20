@@ -4,7 +4,7 @@ import { Container } from "@/components/layout/container";
 export default function MarketingLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <div className="relative flex min-h-screen flex-col">

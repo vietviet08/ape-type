@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 interface ContainerProps {
-  className?: string;
-  children: React.ReactNode;
+  readonly className?: string;
+  readonly children: React.ReactNode;
 }
 
 export function Container({ className, children }: ContainerProps) {

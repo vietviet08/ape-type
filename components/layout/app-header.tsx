@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: "/about", label: "About" },
 ] as const;
 
-export function AppHeader({ pathname }: { pathname?: string }) {
+export function AppHeader({ pathname }: { readonly pathname?: string }) {
   return (
     <header className="border-border/60 bg-background/90 sticky top-0 z-30 border-b backdrop-blur">
       <Container className="flex h-16 items-center justify-between">

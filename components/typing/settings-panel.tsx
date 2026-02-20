@@ -55,14 +55,16 @@ export function SettingsPanel() {
 
           <div className="flex flex-wrap gap-2">
             {(settings.mode === "time" ? TIME_OPTIONS : WORD_OPTIONS).map(
-              (option) => (
+              (option) => {
+                const isSelected = settings.mode === "time"
+                  ? settings.duration === option
+                  : settings.wordCount === option;
+                return (
                 <button
                   key={option}
                   type="button"
                   className={`rounded-md border px-3 py-2 text-sm transition-colors ${
-                    (settings.mode === "time"
-                      ? settings.duration
-                      : settings.wordCount) === option
+                    isSelected
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border text-muted-foreground hover:text-foreground"
                   }`}
@@ -78,13 +80,14 @@ export function SettingsPanel() {
                 >
                   {settings.mode === "time" ? `${option}s` : option}
                 </button>
-              ),
+              );
+              },
             )}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-muted-foreground text-sm">Word list</label>
+              <div className="text-muted-foreground text-sm">Word list</div>
               <Select
                 value={settings.wordList}
                 onValueChange={(value) => {
@@ -106,7 +109,7 @@ export function SettingsPanel() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-muted-foreground text-sm">Theme</label>
+              <div className="text-muted-foreground text-sm">Theme</div>
               <Select
                 value={settings.theme}
                 onValueChange={(value) => {
@@ -205,17 +208,19 @@ export function SettingsPanel() {
   );
 }
 
+interface SettingSwitchProps {
+  readonly title: string;
+  readonly description: string;
+  readonly checked: boolean;
+  readonly onCheckedChange: (checked: boolean) => void;
+}
+
 function SettingSwitch({
   title,
   description,
   checked,
   onCheckedChange,
-}: {
-  title: string;
-  description: string;
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-}) {
+}: SettingSwitchProps) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
