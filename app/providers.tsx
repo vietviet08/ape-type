@@ -3,6 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import { useTheme } from "next-themes";
 
+import { I18nProvider } from "@/components/i18n/I18nProvider";
 import {
   SettingsProvider,
   useSettings,
@@ -37,12 +38,14 @@ export function AppProviders({ children }: { readonly children: ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <SettingsProvider>
-        <TooltipProvider delayDuration={120}>
-          <ThemeSync />
-          {children}
-        </TooltipProvider>
-      </SettingsProvider>
+      <I18nProvider>
+        <SettingsProvider>
+          <TooltipProvider delayDuration={120}>
+            <ThemeSync />
+            {children}
+          </TooltipProvider>
+        </SettingsProvider>
+      </I18nProvider>
     </ThemeProvider>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
 
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { useSettings } from "@/components/providers/settings-provider";
 import { MetricsBar } from "@/components/typing/metrics-bar";
 import { ResultsDialog } from "@/components/typing/results-dialog";
@@ -41,7 +42,11 @@ import {
   getActiveRowIndex,
 } from "@/lib/typing-engine";
 import { cn } from "@/lib/utils";
-import { TIME_OPTIONS, WORD_OPTIONS } from "@/types/settings";
+import {
+  TIME_OPTIONS,
+  WORD_OPTIONS,
+  type WordListName,
+} from "@/types/settings";
 import type { StoredTestResult, WpmSample } from "@/types";
 
 type SessionStatus = "idle" | "running" | "finished";
@@ -68,6 +73,7 @@ function isPrintableKey(event: KeyboardEvent<HTMLInputElement>): boolean {
 
 export function TypingShell() {
   const { settings, updateSettings } = useSettings();
+  const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isComposingRef = useRef(false);
   const finishedRef = useRef(false);
@@ -493,13 +499,18 @@ export function TypingShell() {
 
   const remainingLabel =
     settings.mode === "time"
-      ? `Time left ${formatRemainingTime(remainingMs)}`
-      : `${Math.max(settings.wordCount - currentWordIndex, 0)} words left`;
+      ? t("typing.time.label", { time: formatRemainingTime(remainingMs) })
+      : t("typing.words.label", {
+          count: Math.max(settings.wordCount - currentWordIndex, 0),
+        });
 
   const progressLabel =
     settings.mode === "time"
-      ? `${currentWordIndex} words typed`
-      : `Progress ${Math.min(currentWordIndex, settings.wordCount)}/${settings.wordCount}`;
+      ? t("typing.progress.typed", { count: currentWordIndex })
+      : t("typing.progress.words", {
+          current: Math.min(currentWordIndex, settings.wordCount),
+          total: settings.wordCount,
+        });
 
   return (
     <div className="space-y-6">
@@ -515,9 +526,12 @@ export function TypingShell() {
             }}
             className="w-full lg:w-auto"
           >
-            <TabsList className="grid w-full grid-cols-2 lg:w-[220px]">
-              <TabsTrigger value="time">Time</TabsTrigger>
-              <TabsTrigger value="words">Words</TabsTrigger>
+            <TabsList
+              className="grid w-full grid-cols-2 lg:w-[220px]"
+              aria-label={t("typing.mode.label")}
+            >
+              <TabsTrigger value="time">{t("typing.mode.time")}</TabsTrigger>
+              <TabsTrigger value="words">{t("typing.mode.words")}</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -532,7 +546,7 @@ export function TypingShell() {
                     }
                     onClick={() => updateSettings({ duration: option })}
                   >
-                    {option}s
+                    {t("stats.target.seconds", { count: option })}
                   </Button>
                 ))
               : WORD_OPTIONS.map((option) => (
@@ -553,7 +567,7 @@ export function TypingShell() {
             <Select
               value={settings.wordList}
               onValueChange={(value) => {
-                const nextWordList = value as "english_1k" | "english_5k";
+                const nextWordList = value as WordListName;
                 if (nextWordList !== settings.wordList) {
                   updateSettings({
                     wordList: nextWordList,
@@ -562,11 +576,18 @@ export function TypingShell() {
               }}
             >
               <SelectTrigger size="sm" className="w-[140px]">
-                <SelectValue placeholder="Word list" />
+                <SelectValue placeholder={t("typing.wordList.label")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="english_1k">English 1k</SelectItem>
-                <SelectItem value="english_5k">English 5k</SelectItem>
+                <SelectItem value="english_1k">
+                  {t("typing.wordList.english1k")}
+                </SelectItem>
+                <SelectItem value="english_5k">
+                  {t("typing.wordList.english5k")}
+                </SelectItem>
+                <SelectItem value="vietnamese_core">
+                  {t("typing.wordList.vietnameseCore")}
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -576,14 +597,12 @@ export function TypingShell() {
                   variant="ghost"
                   size="icon-sm"
                   onClick={resetSession}
-                  aria-label="Restart test"
+                  aria-label={t("typing.aria.restartTest")}
                 >
                   <RotateCcw className="size-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Restart (`Tab` or `Ctrl+Enter`)
-              </TooltipContent>
+              <TooltipContent side="bottom">{t("typing.hint.restart")}</TooltipContent>
             </Tooltip>
           </div>
         </div>
@@ -591,15 +610,15 @@ export function TypingShell() {
         <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs">
           <div className="inline-flex items-center gap-1.5">
             <Keyboard className="size-3.5" />
-            Hidden input capture enabled
+            {t("typing.hint.hiddenInput")}
           </div>
           <Separator orientation="vertical" className="h-4" />
-          <span>Seed {seed || "-"}</span>
+          <span>{t("typing.hint.seed", { seed: seed || "-" })}</span>
           {stopOnWordBlocked ? (
             <>
               <Separator orientation="vertical" className="h-4" />
               <span className="text-destructive">
-                Stop-on-word blocked: finish the current word first.
+                {t("typing.hint.stopOnWordBlocked")}
               </span>
             </>
           ) : null}
@@ -616,7 +635,7 @@ export function TypingShell() {
       <button
         onClick={focusInput}
         className={cn("relative rounded-2xl")}
-        aria-label="Typing test area"
+        aria-label={t("typing.aria.testArea")}
       >
         <input
           ref={inputRef}
@@ -639,7 +658,7 @@ export function TypingShell() {
           autoComplete="off"
           spellCheck={false}
           inputMode="text"
-          aria-label="Hidden typing input"
+          aria-label={t("typing.aria.hiddenInput")}
           className="sr-only"
         />
 
@@ -651,7 +670,7 @@ export function TypingShell() {
       </button>
 
       <div className="text-muted-foreground text-xs">
-        {isComposing ? "IME composition in progress" : ""}
+        {isComposing ? t("typing.hint.ime") : ""}
       </div>
 
       <ResultsDialog

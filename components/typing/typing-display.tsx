@@ -1,3 +1,6 @@
+"use client";
+
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import type { RenderedWord } from "@/types";
 
@@ -14,9 +17,11 @@ export function TypingDisplay({
   activeVisibleRow,
   isFocused,
 }: TypingDisplayProps) {
+  const { t } = useI18n();
+
   return (
     <section
-      aria-label="Typing prompt"
+      aria-label={t("typing.aria.prompt")}
       className="border-border/70 bg-card/70 relative rounded-2xl border p-4 shadow-[0_16px_48px_rgba(0,0,0,0.25)] backdrop-blur sm:p-6"
     >
       <div className="space-y-3">
@@ -38,7 +43,7 @@ export function TypingDisplay({
 
       {isFocused ? null : (
         <p className="text-muted-foreground pointer-events-none absolute right-4 bottom-3 text-xs sm:hidden">
-          Tap to focus
+          {t("typing.hint.focus")}
         </p>
       )}
     </section>

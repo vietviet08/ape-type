@@ -2,9 +2,22 @@
 
 import dynamic from "next/dynamic";
 
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { useSettings } from "@/components/providers/settings-provider";
 import { TypingErrorBoundary } from "@/components/typing/typing-error-boundary";
 import { Card, CardContent } from "@/components/ui/card";
+
+function TypingIslandLoading() {
+  const { t } = useI18n();
+
+  return (
+    <Card className="border-border/70 bg-card/50">
+      <CardContent className="text-muted-foreground p-8 text-sm">
+        {t("typing.loading.engine")}
+      </CardContent>
+    </Card>
+  );
+}
 
 const TypingShell = dynamic(
   () =>
@@ -13,13 +26,7 @@ const TypingShell = dynamic(
     ),
   {
     ssr: false,
-    loading: () => (
-      <Card className="border-border/70 bg-card/50">
-        <CardContent className="text-muted-foreground p-8 text-sm">
-          Loading typing engine...
-        </CardContent>
-      </Card>
-    ),
+    loading: TypingIslandLoading,
   },
 );
 
@@ -37,13 +44,7 @@ export function TypingIsland() {
   ].join(":");
 
   if (!hydrated) {
-    return (
-      <Card className="border-border/70 bg-card/50">
-        <CardContent className="text-muted-foreground p-8 text-sm">
-          Loading typing engine...
-        </CardContent>
-      </Card>
-    );
+    return <TypingIslandLoading />;
   }
 
   return (

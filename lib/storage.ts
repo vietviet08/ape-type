@@ -11,6 +11,7 @@ import type { ApeTypeSettings, StoredTestResult } from "@/types";
 const SETTINGS_KEY = "ape-type.settings";
 const HISTORY_KEY = "ape-type.history";
 const HISTORY_LIMIT = 50;
+const WORD_LIST_VALUES = ["english_1k", "english_5k", "vietnamese_core"] as const;
 
 const settingsSchema = z.object({
   version: z.number().int().default(SETTINGS_SCHEMA_VERSION),
@@ -25,7 +26,7 @@ const settingsSchema = z.object({
     .refine((value): value is (typeof WORD_OPTIONS)[number] =>
       WORD_OPTIONS.includes(value as (typeof WORD_OPTIONS)[number]),
     ),
-  wordList: z.enum(["english_1k", "english_5k"]),
+  wordList: z.enum(WORD_LIST_VALUES),
   punctuation: z.boolean(),
   numbers: z.boolean(),
   capitalize: z.boolean(),
@@ -47,7 +48,7 @@ const resultSchema = z.object({
   mode: z.enum(["time", "words"]),
   duration: z.number().int().positive().nullable(),
   wordCount: z.number().int().positive().nullable(),
-  wordList: z.enum(["english_1k", "english_5k"]),
+  wordList: z.enum(WORD_LIST_VALUES),
   seed: z.string().min(1),
   wpm: z.number().nonnegative(),
   raw: z.number().nonnegative(),

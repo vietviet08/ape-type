@@ -1,7 +1,9 @@
 import english1k from "@/lib/wordlists/english_1k.json";
 import english5k from "@/lib/wordlists/english_5k.json";
+import vietnameseCore from "@/lib/wordlists/vietnamese_core.json";
 
 export const WORDLIST_MAP = {
   english_1k: english1k,
   english_5k: english5k,
+  vietnamese_core: vietnameseCore,
 } as const;
