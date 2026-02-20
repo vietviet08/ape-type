@@ -1,6 +1,6 @@
 export type TestMode = "time" | "words";
 
-export type WordListName = "english_1k" | "english_5k";
+export type WordListName = "english_1k" | "english_5k" | "vietnamese_core";
 
 export type ThemeMode = "dark" | "light" | "system";
 

@@ -11,7 +11,7 @@ A minimalist, open-source typing test built from scratch with **Next.js 16**, **
 | Category               | Details                                                                    |
 | ---------------------- | -------------------------------------------------------------------------- |
 | **Test modes**         | Time-based (15 / 30 / 60 / 120 s) or word-count (10 / 25 / 50 / 100 words) |
-| **Word lists**         | English 1 k and English 5 k built-in                                       |
+| **Word lists**         | English 1 k, English 5 k, and Vietnamese Core built-in                     |
 | **Customization**      | Punctuation, numbers, capitalization, stop-on-word, key sound              |
 | **Real-time metrics**  | WPM, raw WPM, accuracy, correct / incorrect / total characters             |
 | **Results dialog**     | Per-second WPM + accuracy chart powered by Recharts                        |

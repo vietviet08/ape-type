@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useI18n } from "@/components/i18n/I18nProvider";
 
 interface ResultsDialogProps {
   readonly open: boolean;
@@ -36,6 +37,7 @@ export function ResultsDialog({
   onRestart,
 }: ResultsDialogProps) {
   const isClient = useIsClient();
+  const { t } = useI18n();
 
   if (!result) {
     return null;
@@ -58,24 +60,24 @@ export function ResultsDialog({
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle className="font-mono text-2xl">
-            Test Complete
+            {t("typing.result.title")}
           </DialogTitle>
           <DialogDescription>
             {new Date(result.timestamp).toLocaleString()} -{" "}
             {result.mode === "time"
-              ? `${result.duration}s`
-              : `${result.wordCount} words`}
+              ? t("stats.target.seconds", { count: result.duration ?? 0 })
+              : t("stats.target.words", { count: result.wordCount ?? 0 })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-3 sm:grid-cols-4">
-          <MetricCard label="WPM" value={result.wpm.toFixed(2)} />
-          <MetricCard label="Raw WPM" value={result.raw.toFixed(2)} />
+          <MetricCard label={t("typing.result.wpm")} value={result.wpm.toFixed(2)} />
+          <MetricCard label={t("typing.result.raw")} value={result.raw.toFixed(2)} />
           <MetricCard
-            label="Accuracy"
+            label={t("typing.result.accuracy")}
             value={`${result.accuracy.toFixed(2)}%`}
           />
-          <MetricCard label="Errors" value={String(result.errors)} />
+          <MetricCard label={t("typing.result.errors")} value={String(result.errors)} />
         </div>
 
         <div className="border-border/70 bg-muted/20 h-64 rounded-lg border p-2">
@@ -109,7 +111,7 @@ export function ResultsDialog({
                 <Line
                   type="monotone"
                   dataKey="wpm"
-                  name="WPM"
+                  name={t("typing.result.wpm")}
                   stroke="var(--color-primary)"
                   strokeWidth={2}
                   dot={false}
@@ -117,7 +119,7 @@ export function ResultsDialog({
                 <Line
                   type="monotone"
                   dataKey="rawWpm"
-                  name="Raw"
+                  name={t("typing.result.raw")}
                   stroke="var(--color-chart-2)"
                   strokeWidth={2}
                   dot={false}
@@ -130,7 +132,7 @@ export function ResultsDialog({
         </div>
 
         <DialogFooter>
-          <Button onClick={onRestart}>Restart</Button>
+          <Button onClick={onRestart}>{t("typing.result.restart")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

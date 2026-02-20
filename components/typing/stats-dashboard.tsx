@@ -28,11 +28,13 @@ import {
   loadHistory,
   saveHistory,
 } from "@/lib/storage";
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { useIsClient } from "@/hooks/use-is-client";
 import type { StoredTestResult } from "@/types";
 
 export function StatsDashboard() {
   const isClient = useIsClient();
+  const { t } = useI18n();
   const [results, setResults] = useState<StoredTestResult[]>(() =>
     loadHistory(),
   );
@@ -71,10 +73,8 @@ export function StatsDashboard() {
       const text = await file.text();
       const imported = importHistory(text);
       setResults(imported);
-    } catch (error) {
-      setImportError(
-        error instanceof Error ? error.message : "Failed to import stats.",
-      );
+    } catch {
+      setImportError(t("stats.importError"));
     }
   };
 
@@ -87,27 +87,29 @@ export function StatsDashboard() {
     <div className="space-y-6">
       <Card className="border-border/70 bg-card/60">
         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="font-mono text-xl">Performance Trend</CardTitle>
+          <CardTitle className="font-mono text-xl">
+            {t("stats.performance.title")}
+          </CardTitle>
           <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >
-              Import JSON
+              {t("stats.import")}
             </Button>
             <Button
               variant="outline"
               onClick={handleExport}
               disabled={results.length === 0}
             >
-              Export JSON
+              {t("stats.export")}
             </Button>
             <Button
               variant="ghost"
               onClick={handleClear}
               disabled={results.length === 0}
             >
-              Clear
+              {t("stats.clear")}
             </Button>
             <Input
               ref={fileInputRef}
@@ -181,7 +183,7 @@ export function StatsDashboard() {
       <Card className="border-border/70 bg-card/60">
         <CardHeader>
           <CardTitle className="font-mono text-xl">
-            Recent Tests ({results.length})
+            {t("stats.recent", { count: results.length })}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -189,13 +191,13 @@ export function StatsDashboard() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Mode</TableHead>
-                  <TableHead>Target</TableHead>
-                  <TableHead>WPM</TableHead>
-                  <TableHead>Raw</TableHead>
-                  <TableHead>Acc</TableHead>
-                  <TableHead>Errors</TableHead>
+                  <TableHead>{t("stats.table.date")}</TableHead>
+                  <TableHead>{t("stats.table.mode")}</TableHead>
+                  <TableHead>{t("stats.table.target")}</TableHead>
+                  <TableHead>{t("stats.table.wpm")}</TableHead>
+                  <TableHead>{t("stats.table.raw")}</TableHead>
+                  <TableHead>{t("stats.table.accuracy")}</TableHead>
+                  <TableHead>{t("stats.table.errors")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -205,7 +207,7 @@ export function StatsDashboard() {
                       colSpan={7}
                       className="text-muted-foreground text-center"
                     >
-                      No tests recorded yet.
+                      {t("stats.empty")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -214,11 +216,19 @@ export function StatsDashboard() {
                       <TableCell>
                         {new Date(result.timestamp).toLocaleString()}
                       </TableCell>
-                      <TableCell>{result.mode}</TableCell>
                       <TableCell>
                         {result.mode === "time"
-                          ? `${result.duration}s`
-                          : `${result.wordCount} words`}
+                          ? t("stats.mode.time")
+                          : t("stats.mode.words")}
+                      </TableCell>
+                      <TableCell>
+                        {result.mode === "time"
+                          ? t("stats.target.seconds", {
+                              count: result.duration ?? 0,
+                            })
+                          : t("stats.target.words", {
+                              count: result.wordCount ?? 0,
+                            })}
                       </TableCell>
                       <TableCell>{result.wpm.toFixed(2)}</TableCell>
                       <TableCell>{result.raw.toFixed(2)}</TableCell>

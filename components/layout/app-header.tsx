@@ -1,17 +1,23 @@
+"use client";
+
 import Link from "next/link";
 
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Container } from "@/components/layout/container";
+import { LanguageSelector } from "@/components/layout/language-selector";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Test" },
-  { href: "/settings", label: "Settings" },
-  { href: "/stats", label: "Stats" },
-  { href: "/about", label: "About" },
+  { href: "/", labelKey: "nav.typing" },
+  { href: "/settings", labelKey: "nav.settings" },
+  { href: "/stats", labelKey: "nav.stats" },
+  { href: "/about", labelKey: "nav.about" },
 ] as const;
 
 export function AppHeader({ pathname }: { readonly pathname?: string }) {
+  const { t } = useI18n();
+
   return (
     <header className="border-border/60 bg-background/90 sticky top-0 z-30 border-b backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
@@ -20,9 +26,9 @@ export function AppHeader({ pathname }: { readonly pathname?: string }) {
             href="/"
             className="text-foreground font-mono text-lg font-semibold tracking-wide"
           >
-            ApeType
+            {t("app.name")}
           </Link>
-          <nav aria-label="Primary" className="hidden gap-1 sm:flex">
+          <nav aria-label={t("nav.primaryAria")} className="hidden gap-1 sm:flex">
             {NAV_ITEMS.map((item) => {
               const active =
                 item.href === "/"
@@ -37,13 +43,14 @@ export function AppHeader({ pathname }: { readonly pathname?: string }) {
                     active && "bg-muted text-foreground",
                   )}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               );
             })}
           </nav>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageSelector />
           <ThemeToggle />
         </div>
       </Container>

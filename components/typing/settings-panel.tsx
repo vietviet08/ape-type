@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 
+import { useI18n } from "@/components/i18n/I18nProvider";
 import { useSettings } from "@/components/providers/settings-provider";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,17 +16,22 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TIME_OPTIONS, WORD_OPTIONS } from "@/types/settings";
+import {
+  TIME_OPTIONS,
+  WORD_OPTIONS,
+  type WordListName,
+} from "@/types/settings";
 
 export function SettingsPanel() {
   const { settings, hydrated, updateSettings, resetSettings } = useSettings();
   const { setTheme } = useTheme();
+  const { t } = useI18n();
 
   if (!hydrated) {
     return (
       <Card>
         <CardContent className="text-muted-foreground p-6 text-sm">
-          Loading settings...
+          {t("settings.loading")}
         </CardContent>
       </Card>
     );
@@ -35,7 +41,9 @@ export function SettingsPanel() {
     <div className="space-y-6">
       <Card className="border-border/70 bg-card/60">
         <CardHeader>
-          <CardTitle className="font-mono text-xl">Test Mode</CardTitle>
+          <CardTitle className="font-mono text-xl">
+            {t("settings.mode.title")}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Tabs
@@ -47,9 +55,12 @@ export function SettingsPanel() {
               }
             }}
           >
-            <TabsList className="grid w-full grid-cols-2 sm:w-[220px]">
-              <TabsTrigger value="time">Time</TabsTrigger>
-              <TabsTrigger value="words">Words</TabsTrigger>
+            <TabsList
+              className="grid w-full grid-cols-2 sm:w-[220px]"
+              aria-label={t("typing.mode.label")}
+            >
+              <TabsTrigger value="time">{t("typing.mode.time")}</TabsTrigger>
+              <TabsTrigger value="words">{t("typing.mode.words")}</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -78,7 +89,9 @@ export function SettingsPanel() {
                         })
                   }
                 >
-                  {settings.mode === "time" ? `${option}s` : option}
+                  {settings.mode === "time"
+                    ? t("stats.target.seconds", { count: option })
+                    : option}
                 </button>
               );
               },
@@ -87,11 +100,13 @@ export function SettingsPanel() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">Word list</div>
+              <div className="text-muted-foreground text-sm">
+                {t("settings.wordList.label")}
+              </div>
               <Select
                 value={settings.wordList}
                 onValueChange={(value) => {
-                  const nextWordList = value as "english_1k" | "english_5k";
+                  const nextWordList = value as WordListName;
                   if (nextWordList !== settings.wordList) {
                     updateSettings({
                       wordList: nextWordList,
@@ -100,16 +115,25 @@ export function SettingsPanel() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Word list" />
+                  <SelectValue placeholder={t("settings.wordList.label")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="english_1k">English 1k</SelectItem>
-                  <SelectItem value="english_5k">English 5k</SelectItem>
+                  <SelectItem value="english_1k">
+                    {t("typing.wordList.english1k")}
+                  </SelectItem>
+                  <SelectItem value="english_5k">
+                    {t("typing.wordList.english5k")}
+                  </SelectItem>
+                  <SelectItem value="vietnamese_core">
+                    {t("typing.wordList.vietnameseCore")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">Theme</div>
+              <div className="text-muted-foreground text-sm">
+                {t("settings.theme.label")}
+              </div>
               <Select
                 value={settings.theme}
                 onValueChange={(value) => {
@@ -121,12 +145,12 @@ export function SettingsPanel() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Theme" />
+                  <SelectValue placeholder={t("settings.theme.label")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
+                  <SelectItem value="dark">{t("settings.theme.dark")}</SelectItem>
+                  <SelectItem value="light">{t("settings.theme.light")}</SelectItem>
+                  <SelectItem value="system">{t("settings.theme.system")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -136,12 +160,14 @@ export function SettingsPanel() {
 
       <Card className="border-border/70 bg-card/60">
         <CardHeader>
-          <CardTitle className="font-mono text-xl">Behavior</CardTitle>
+          <CardTitle className="font-mono text-xl">
+            {t("settings.behavior.title")}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <SettingSwitch
-            title="Punctuation"
-            description="Append random punctuation marks to words."
+            title={t("settings.behavior.punctuation.label")}
+            description={t("settings.behavior.punctuation.description")}
             checked={settings.punctuation}
             onCheckedChange={(checked) =>
               updateSettings({ punctuation: checked })
@@ -149,15 +175,15 @@ export function SettingsPanel() {
           />
           <Separator />
           <SettingSwitch
-            title="Numbers"
-            description="Inject short digit groups into random words."
+            title={t("settings.behavior.numbers.label")}
+            description={t("settings.behavior.numbers.description")}
             checked={settings.numbers}
             onCheckedChange={(checked) => updateSettings({ numbers: checked })}
           />
           <Separator />
           <SettingSwitch
-            title="Capitalize"
-            description="Apply sentence casing across generated words."
+            title={t("settings.behavior.capitalize.label")}
+            description={t("settings.behavior.capitalize.description")}
             checked={settings.capitalize}
             onCheckedChange={(checked) =>
               updateSettings({ capitalize: checked })
@@ -165,8 +191,8 @@ export function SettingsPanel() {
           />
           <Separator />
           <SettingSwitch
-            title="Stop on word"
-            description="Prevent advancing if the current word is incorrect."
+            title={t("settings.behavior.stopOnWord.label")}
+            description={t("settings.behavior.stopOnWord.description")}
             checked={settings.stopOnWord}
             onCheckedChange={(checked) =>
               updateSettings({ stopOnWord: checked })
@@ -174,8 +200,8 @@ export function SettingsPanel() {
           />
           <Separator />
           <SettingSwitch
-            title="Key sound"
-            description="Play a subtle click on each printable key press."
+            title={t("settings.sound.label")}
+            description={t("settings.sound.description")}
             checked={settings.sound}
             onCheckedChange={(checked) => updateSettings({ sound: checked })}
           />
@@ -184,9 +210,9 @@ export function SettingsPanel() {
 
       <div className="border-border/70 bg-card/60 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4">
         <div className="space-y-1">
-          <p className="font-medium">Storage</p>
+          <p className="font-medium">{t("settings.storage.title")}</p>
           <p className="text-muted-foreground text-sm">
-            Settings are versioned and persisted in localStorage.
+            {t("settings.storage.description")}
           </p>
         </div>
         <button
@@ -194,7 +220,7 @@ export function SettingsPanel() {
           className="border-border text-muted-foreground hover:text-foreground rounded-md border px-3 py-2 text-sm transition-colors"
           onClick={resetSettings}
         >
-          Reset to defaults
+          {t("settings.reset")}
         </button>
       </div>
 
@@ -202,7 +228,7 @@ export function SettingsPanel() {
         variant="secondary"
         className="font-mono text-xs tracking-[0.12em]"
       >
-        schema v{settings.version}
+        {t("settings.schema", { version: settings.version })}
       </Badge>
     </div>
   );
