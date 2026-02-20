@@ -4,9 +4,9 @@ import type { RenderedWord } from "@/types";
 import { WordRow } from "@/components/typing/word-row";
 
 interface TypingDisplayProps {
-  rows: RenderedWord[][];
-  activeVisibleRow: number;
-  isFocused: boolean;
+  readonly rows: RenderedWord[][];
+  readonly activeVisibleRow: number;
+  readonly isFocused: boolean;
 }
 
 export function TypingDisplay({
@@ -36,11 +36,11 @@ export function TypingDisplay({
         })}
       </div>
 
-      {!isFocused ? (
+      {isFocused ? null : (
         <p className="text-muted-foreground pointer-events-none absolute right-4 bottom-3 text-xs sm:hidden">
           Tap to focus
         </p>
-      ) : null}
+      )}
     </section>
   );
 }

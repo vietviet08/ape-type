@@ -29,7 +29,7 @@ function ThemeSync() {
   return null;
 }
 
-export function AppProviders({ children }: { children: ReactNode }) {
+export function AppProviders({ children }: { readonly children: ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"

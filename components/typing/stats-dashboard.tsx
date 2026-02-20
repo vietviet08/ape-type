@@ -53,12 +53,12 @@ export function StatsDashboard() {
   const handleExport = () => {
     const payload = exportHistory();
     const blob = new Blob([payload], { type: "application/json" });
-    const url = window.URL.createObjectURL(blob);
+    const url = globalThis.URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
     anchor.download = `ape-type-stats-${new Date().toISOString().slice(0, 10)}.json`;
     anchor.click();
-    window.URL.revokeObjectURL(url);
+    globalThis.URL.revokeObjectURL(url);
   };
 
   const handleImport = async (file: File | null) => {

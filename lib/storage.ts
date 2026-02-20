@@ -69,7 +69,7 @@ const historySchema = z.array(resultSchema);
 
 function hasStorage(): boolean {
   return (
-    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+    typeof globalThis !== "undefined" && typeof globalThis.localStorage !== "undefined"
   );
 }
 
@@ -78,7 +78,7 @@ function readRaw(key: string): unknown {
     return null;
   }
 
-  const raw = window.localStorage.getItem(key);
+  const raw = globalThis.localStorage.getItem(key);
   if (!raw) {
     return null;
   }
@@ -95,7 +95,7 @@ function writeRaw(key: string, value: unknown): void {
     return;
   }
 
-  window.localStorage.setItem(key, JSON.stringify(value));
+  globalThis.localStorage.setItem(key, JSON.stringify(value));
 }
 
 export function loadSettings(): ApeTypeSettings {

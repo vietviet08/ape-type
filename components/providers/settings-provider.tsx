@@ -22,7 +22,7 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-export function SettingsProvider({ children }: { children: ReactNode }) {
+export function SettingsProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [settings, setSettings] = useState<ApeTypeSettings>(() =>
     loadSettings(),
   );

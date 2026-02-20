@@ -23,10 +23,10 @@ import {
 } from "@/components/ui/dialog";
 
 interface ResultsDialogProps {
-  open: boolean;
-  result: StoredTestResult | null;
-  onOpenChange: (open: boolean) => void;
-  onRestart: () => void;
+  readonly open: boolean;
+  readonly result: StoredTestResult | null;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly onRestart: () => void;
 }
 
 export function ResultsDialog({
@@ -137,7 +137,7 @@ export function ResultsDialog({
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <div className="border-border/70 bg-card/80 rounded-lg border p-3">
       <div className="text-muted-foreground text-xs tracking-[0.12em] uppercase">

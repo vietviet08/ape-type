@@ -101,15 +101,15 @@ export function TypingShell() {
   }, [focusInput]);
 
   const playKeyClick = useCallback(() => {
-    if (!settings.sound || typeof window === "undefined") {
+    if (!settings.sound || typeof globalThis === "undefined") {
       return;
     }
 
     try {
       const AudioCtx =
-        window.AudioContext ||
+        globalThis.AudioContext ||
         (
-          window as typeof window & {
+          globalThis as typeof globalThis & {
             webkitAudioContext?: typeof AudioContext;
           }
         ).webkitAudioContext;
@@ -118,9 +118,7 @@ export function TypingShell() {
         return;
       }
 
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioCtx();
-      }
+      audioContextRef.current ??= new AudioCtx();
 
       const ctx = audioContextRef.current;
       const oscillator = ctx.createOscillator();
@@ -160,8 +158,8 @@ export function TypingShell() {
     setShowResultDialog(false);
     setStopOnWordBlocked(false);
 
-    if (typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
+    if (typeof globalThis !== "undefined") {
+      globalThis.requestAnimationFrame(() => {
         focusInput();
       });
     }
@@ -298,10 +296,10 @@ export function TypingShell() {
     };
 
     updateElapsed();
-    const timer = window.setInterval(updateElapsed, 80);
+    const timer = globalThis.setInterval(updateElapsed, 80);
 
     return () => {
-      window.clearInterval(timer);
+      globalThis.clearInterval(timer);
     };
   }, [
     committedWords,
@@ -442,7 +440,7 @@ export function TypingShell() {
         return;
       }
 
-      const sanitized = value.replace(/\s+/g, "");
+      const sanitized = value.replaceAll(/\s+/g, "");
       if (sanitized.length > 0) {
         beginSession();
       }
@@ -615,11 +613,10 @@ export function TypingShell() {
         progressLabel={progressLabel}
       />
 
-      <div
-        role="application"
-        aria-label="Typing test area"
+      <button
         onClick={focusInput}
         className={cn("relative rounded-2xl")}
+        aria-label="Typing test area"
       >
         <input
           ref={inputRef}
@@ -651,7 +648,7 @@ export function TypingShell() {
           activeVisibleRow={activeVisibleRow}
           isFocused={isFocused}
         />
-      </div>
+      </button>
 
       <div className="text-muted-foreground text-xs">
         {isComposing ? "IME composition in progress" : ""}
