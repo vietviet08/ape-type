@@ -45,13 +45,18 @@ export function ResultsDialog({
 
   const data =
     result.samples.length > 0
-      ? result.samples
+      ? result.samples.map((sample) => ({
+          ...sample,
+          wpm: Math.round(sample.wpm),
+          rawWpm: Math.round(sample.rawWpm),
+          accuracy: Math.round(sample.accuracy),
+        }))
       : [
           {
             second: 0,
-            wpm: result.wpm,
-            rawWpm: result.raw,
-            accuracy: result.accuracy,
+            wpm: Math.round(result.wpm),
+            rawWpm: Math.round(result.raw),
+            accuracy: Math.round(result.accuracy),
           },
         ];
 
@@ -71,11 +76,11 @@ export function ResultsDialog({
         </DialogHeader>
 
         <div className="grid gap-3 sm:grid-cols-4">
-          <MetricCard label={t("typing.result.wpm")} value={result.wpm.toFixed(2)} />
-          <MetricCard label={t("typing.result.raw")} value={result.raw.toFixed(2)} />
+          <MetricCard label={t("typing.result.wpm")} value={String(Math.round(result.wpm))} />
+          <MetricCard label={t("typing.result.raw")} value={String(Math.round(result.raw))} />
           <MetricCard
             label={t("typing.result.accuracy")}
-            value={`${result.accuracy.toFixed(2)}%`}
+            value={`${Math.round(result.accuracy)}%`}
           />
           <MetricCard label={t("typing.result.errors")} value={String(result.errors)} />
         </div>

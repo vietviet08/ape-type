@@ -2,9 +2,8 @@ import type { CharacterAnalysis, LiveMetrics } from "@/types/typing";
 
 const MILLIS_PER_MINUTE = 60000;
 
-function round(value: number, digits = 2): number {
-  const factor = 10 ** digits;
-  return Math.round(value * factor) / factor;
+function roundToInt(value: number): number {
+  return Math.round(value);
 }
 
 export function calculateMetrics(
@@ -19,7 +18,7 @@ export function calculateMetrics(
       rawWpm: 0,
       accuracy:
         analysis.typedChars > 0
-          ? round((analysis.correctChars / analysis.typedChars) * 100)
+          ? roundToInt((analysis.correctChars / analysis.typedChars) * 100)
           : 100,
     };
   }
@@ -36,9 +35,9 @@ export function calculateMetrics(
   return {
     ...analysis,
     elapsedMs,
-    wpm: round(wpm),
-    rawWpm: round(rawWpm),
-    accuracy: round(accuracy * 100),
+    wpm: roundToInt(wpm),
+    rawWpm: roundToInt(rawWpm),
+    accuracy: roundToInt(accuracy * 100),
   };
 }
 
