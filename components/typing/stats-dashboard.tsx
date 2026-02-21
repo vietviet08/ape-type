@@ -45,8 +45,8 @@ export function StatsDashboard() {
     () =>
       [...results].reverse().map((result, index) => ({
         index: index + 1,
-        wpm: Number(result.wpm.toFixed(2)),
-        accuracy: Number(result.accuracy.toFixed(2)),
+        wpm: Math.round(result.wpm),
+        accuracy: Math.round(result.accuracy),
         timestamp: new Date(result.timestamp).toLocaleTimeString(),
       })),
     [results],
@@ -230,9 +230,9 @@ export function StatsDashboard() {
                               count: result.wordCount ?? 0,
                             })}
                       </TableCell>
-                      <TableCell>{result.wpm.toFixed(2)}</TableCell>
-                      <TableCell>{result.raw.toFixed(2)}</TableCell>
-                      <TableCell>{result.accuracy.toFixed(2)}%</TableCell>
+                      <TableCell>{Math.round(result.wpm)}</TableCell>
+                      <TableCell>{Math.round(result.raw)}</TableCell>
+                      <TableCell>{Math.round(result.accuracy)}%</TableCell>
                       <TableCell>{result.errors}</TableCell>
                     </TableRow>
                   ))
