@@ -62,7 +62,14 @@ export function ResultsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent
+        className="max-w-3xl"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          const content = event.currentTarget as HTMLElement;
+          content.focus();
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="font-mono text-2xl">
             {t("typing.result.title")}

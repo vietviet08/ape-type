@@ -393,6 +393,11 @@ export function TypingShell() {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (showResultDialog) {
+        event.preventDefault();
+        return;
+      }
+
       if (event.key === "Tab" || (event.ctrlKey && event.key === "Enter")) {
         event.preventDefault();
         resetSession();
@@ -432,6 +437,7 @@ export function TypingShell() {
       moveBackToPreviousWord,
       playKeyClick,
       resetSession,
+      showResultDialog,
     ],
   );
 
@@ -511,6 +517,18 @@ export function TypingShell() {
           current: Math.min(currentWordIndex, settings.wordCount),
           total: settings.wordCount,
         });
+
+  const handleResultDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setShowResultDialog(true);
+        return;
+      }
+
+      resetSession();
+    },
+    [resetSession],
+  );
 
   return (
     <div className="space-y-6">
@@ -675,7 +693,7 @@ export function TypingShell() {
 
       <ResultsDialog
         open={showResultDialog}
-        onOpenChange={setShowResultDialog}
+        onOpenChange={handleResultDialogOpenChange}
         result={result}
         onRestart={resetSession}
       />
