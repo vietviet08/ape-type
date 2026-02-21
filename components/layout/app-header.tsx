@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { Github } from "lucide-react";
 
 import { useI18n } from "@/components/i18n/I18nProvider";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Container } from "@/components/layout/container";
 import { LanguageSelector } from "@/components/layout/language-selector";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -14,6 +16,8 @@ const NAV_ITEMS = [
   { href: "/stats", labelKey: "nav.stats" },
   { href: "/about", labelKey: "nav.about" },
 ] as const;
+
+const GITHUB_REPO_URL = "https://github.com/vietviet08/ape-type";
 
 export function AppHeader({ pathname }: { readonly pathname?: string }) {
   const { t } = useI18n();
@@ -51,6 +55,21 @@ export function AppHeader({ pathname }: { readonly pathname?: string }) {
         </div>
         <div className="flex items-center gap-2">
           <LanguageSelector />
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            aria-label={t("common.actions.github")}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Github className="size-4" />
+            </a>
+          </Button>
           <ThemeToggle />
         </div>
       </Container>

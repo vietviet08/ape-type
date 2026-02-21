@@ -24,6 +24,7 @@ export const en = {
       reset: "Reset",
       clear: "Clear",
       close: "Close",
+      github: "Open GitHub repository",
     },
     theme: {
       toggle: "Toggle theme",
