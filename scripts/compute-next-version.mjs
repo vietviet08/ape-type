@@ -2,7 +2,7 @@
 
 import { execSync } from "node:child_process";
 
-const DEFAULT_VERSION = "0.0.1";
+const DEFAULT_VERSION = "v0.0.1";
 const SEMVER_RE = /^v?(\d+)\.(\d+)\.(\d+)$/;
 
 function parseVersion(tag) {
@@ -38,7 +38,7 @@ function incrementVersion(current) {
     major += 1;
   }
 
-  return `${major}.${minor}.${patch}`;
+  return `v${major}.${minor}.${patch}`;
 }
 
 function getTags() {
