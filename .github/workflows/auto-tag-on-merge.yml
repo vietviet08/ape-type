@@ -1,0 +1,88 @@
+name: Auto Tag On Merge To Master
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-tag-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect merge commit
+        id: merge_check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          parent_count=$(git rev-list --parents -n 1 "$GITHUB_SHA" | awk '{print NF-1}')
+          echo "parent_count=$parent_count"
+
+          if [ "$parent_count" -ge 2 ]; then
+            echo "is_merge=true" >> "$GITHUB_OUTPUT"
+            echo "Merge commit detected. Continue tagging."
+          else
+            echo "is_merge=false" >> "$GITHUB_OUTPUT"
+            echo "Not a merge commit. Skip tagging."
+          fi
+
+      - name: Configure git identity
+        if: steps.merge_check.outputs.is_merge == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "vietviet08"
+          git config user.email "vietnq.23ceb@vku.udn.vn"
+
+      - name: Create and push next tag
+        if: steps.merge_check.outputs.is_merge == 'true'
+        id: tagger
+        shell: bash
+        env:
+          MAX_RETRIES: "8"
+        run: |
+          set -euo pipefail
+
+          attempt=1
+          while [ "$attempt" -le "$MAX_RETRIES" ]; do
+            git fetch --tags --force origin
+
+            next_tag=$(node scripts/compute-next-version.mjs)
+            echo "Attempt $attempt/$MAX_RETRIES -> candidate tag: $next_tag"
+
+            if git rev-parse -q --verify "refs/tags/$next_tag" >/dev/null; then
+              echo "Tag already exists: $next_tag. Recomputing..."
+              attempt=$((attempt + 1))
+              sleep $((attempt * 2))
+              continue
+            fi
+
+            git tag "$next_tag" "$GITHUB_SHA"
+
+            if git push origin "refs/tags/$next_tag"; then
+              echo "new_tag=$next_tag" >> "$GITHUB_OUTPUT"
+              echo "Tag pushed: $next_tag"
+              exit 0
+            fi
+
+            echo "Push failed (possible race). Retrying..."
+            git tag -d "$next_tag" >/dev/null 2>&1 || true
+            attempt=$((attempt + 1))
+            sleep $((attempt * 2))
+          done
+
+          echo "Unable to create a unique tag after $MAX_RETRIES attempts."
+          exit 1
